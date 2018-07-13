@@ -1,6 +1,6 @@
 <?php
 
-namespace Api\Listeners;
+namespace App\Listeners;
 
 use Illuminate\Auth\Events\Failed;
 use Illuminate\Queue\InteractsWithQueue;

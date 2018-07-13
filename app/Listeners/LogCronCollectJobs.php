@@ -1,12 +1,12 @@
 <?php
 
-namespace Api\Listeners;
+namespace App\Listeners;
 
 use App\Events\CronCollectJobs;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class LogСronCollectJobs
+class LogCronCollectJobs
 {
     /**
      * Create the event listener.

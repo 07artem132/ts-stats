@@ -1,8 +1,8 @@
 <?php
 
-namespace Api\Listeners;
+namespace App\Listeners;
 
-use Api\Events\CronAfterRun;
+use App\Events\CronAfterRun;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 

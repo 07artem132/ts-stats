@@ -1,6 +1,6 @@
 <?php
 
-namespace Api\Listeners;
+namespace App\Listeners;
 
 use Illuminate\Auth\Events\Authenticated;
 use Illuminate\Queue\InteractsWithQueue;
@@ -9,7 +9,7 @@ use Debugbar;
 
 /**
  * Class LogAuthenticated
- * @package Api\Listeners
+ * @package App\Listeners
  */
 class LogAuthenticated {
 	/**

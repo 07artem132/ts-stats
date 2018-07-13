@@ -1,6 +1,6 @@
 <?php
 
-namespace Api\Listeners;
+namespace App\Listeners;
 
 use Illuminate\Auth\Events\Login;
 use Illuminate\Queue\InteractsWithQueue;

@@ -32,22 +32,22 @@ class EventServiceProvider extends ServiceProvider
 		'Illuminate\Auth\Events\Authenticated' => [
 			'App\Listeners\LogAuthenticated',
 		],
-		'Api\Events\CronCollectJobs' => [
-			'App\Listeners\LogСronCollectJobs',
+		'App\Events\CronCollectJobs' => [
+			'App\Listeners\LogCronCollectJobs',
 		],
-		'Api\Events\CronBeforeRun' => [
+		'App\Events\CronBeforeRun' => [
 			'App\Listeners\LogCronBeforeRun',
 		],
-		'Api\Events\CronJobError' => [
+		'App\Events\CronJobError' => [
 			'App\Listeners\LogCronJobError',
 		],
-		'Api\Events\CronJobSuccess' => [
+		'App\Events\CronJobSuccess' => [
 			'App\Listeners\LogCronJobSuccess',
 		],
-		'Api\Events\CronAfterRun' => [
+		'App\Events\CronAfterRun' => [
 			'App\Listeners\LogCronAfterRun',
 		],
-		'Api\Events\CronLocked' => [
+		'App\Events\CronLocked' => [
 			'App\Listeners\LogCronLockedFile',
 		],
 		'Illuminate\Cache\Events\CacheHit' => [

@@ -1,6 +1,6 @@
 <?php
 
-namespace Api\Listeners;
+namespace App\Listeners;
 
 use App\Events\CronLocked;
 use Illuminate\Queue\InteractsWithQueue;

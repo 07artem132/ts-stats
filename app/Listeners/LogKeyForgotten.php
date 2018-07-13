@@ -1,6 +1,6 @@
 <?php
 
-namespace Api\Listeners;
+namespace App\Listeners;
 
 use Illuminate\Cache\Events\KeyForgotten;
 use Illuminate\Queue\InteractsWithQueue;
