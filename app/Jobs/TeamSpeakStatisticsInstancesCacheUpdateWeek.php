@@ -1,12 +1,12 @@
 <?php
 
-namespace Api\Jobs;
+namespace App\Jobs;
 
-use Redis;
+use Illuminate\Support\Facades\Redis;
 use Illuminate\Bus\Queueable;
-use Api\Traits\RestHelperTrait;
-use Api\Exceptions\InvalidJSON;
-use Api\StatisticsTeamspeakInstances;
+use App\Traits\RestHelperTrait;
+use App\Exceptions\InvalidJSON;
+use App\StatisticsTeamspeakInstances;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -36,10 +36,10 @@ class TeamSpeakStatisticsInstancesCacheUpdateWeek implements ShouldQueue
      */
     public function handle()
     {
-	    $redis = Redis::connection();
+	  //  $redis = Redis::connection();
 
 	    try {
-		    $InitialSearchDate = $this->JsonDecodeAndValidate( $redis->lpop( "ts:stat:$this->instance_id:Week" ) )->created_at;
+		    $InitialSearchDate = $this->JsonDecodeAndValidate( Redis::lpop( "ts:stat:$this->instance_id:Week" ) )->created_at;
 		    if ( ( time() - strtotime( $InitialSearchDate ) ) < 1800 ) {
 			    return;
 		    }
@@ -54,8 +54,8 @@ class TeamSpeakStatisticsInstancesCacheUpdateWeek implements ShouldQueue
 	    }
 
 	    foreach ( $data as $item ) {
-		    $redis->lpush( "ts:stat:$this->instance_id:Week", $item->toJson() );
-		    $redis->ltrim( "ts:stat:$this->instance_id:Week", 0, 288 );
+		    Redis::lpush( "ts:stat:$this->instance_id:Week", $item->toJson() );
+		    Redis::ltrim( "ts:stat:$this->instance_id:Week", 0, 288 );
 	    }
     }
 }

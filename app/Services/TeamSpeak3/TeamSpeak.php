@@ -499,10 +499,10 @@ class TeamSpeak {
 	 * @return string
 	 */
 	function BildUrlConnect(): string {
-		$Options = 'timeout=' . config( 'TeamSpeak.connection.timeout' );
-		$Options .= '&blocking=' . config( 'TeamSpeak.connection.blocking' );
-		$Options .= '&nickname=' . config( 'TeamSpeak.connection.nickname' );
-		$url     = "serverquery://{$this->InstanceConfig->username}:{$this->InstanceConfig->password}@{$this->InstanceConfig->hostname}:{$this->InstanceConfig->port}/$Options";
+		$Options = 'timeout=' . config( 'TeamSpeak.connection.timeout',2 );
+		$Options .= '&blocking=' . config( 'TeamSpeak.connection.blocking',1 );
+		$Options .= '&nickname=' . config( 'TeamSpeak.connection.nickname','ts-stats'.rand(1,9) );
+		$url     = "serverquery://{$this->InstanceConfig->username}:{$this->InstanceConfig->password}@{$this->InstanceConfig->ipaddress}:{$this->InstanceConfig->port}/$Options";
 		$url     .= '#' . config( 'TeamSpeak.connection.flags' );
 
 		return $url;

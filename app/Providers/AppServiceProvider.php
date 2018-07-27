@@ -25,8 +25,9 @@ class AppServiceProvider extends ServiceProvider
     {
 	    $loader = \Illuminate\Foundation\AliasLoader::getInstance();
 
-	    if ($this->app->environment() !== 'production') {
+	    if ($this->app->environment() != 'production') {
 		    $this->app->register(\Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class);
+		    $this->app->register(\Barryvdh\Debugbar\ServiceProvider::class);
 	    }
 
     }

@@ -6,7 +6,7 @@
  * Time: 15:01
  */
 
-namespace Api\Traits;
+namespace App\Traits;
 
 use App\Exceptions\UndefinedPOSTIndex;
 use App\Exceptions\InvalidJSON;

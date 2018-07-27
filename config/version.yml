@@ -1,11 +1,11 @@
-version_source: git-local # "config", "git-local" or "git-remote"
+version_source: config # "config", "git-local" or "git-remote"
 blade_directive: version
 current:
-  major: 1
-  minor: 0
+  major: 0
+  minor: 2
   patch: 0
   format: "{$major}.{$minor}.{$patch}"
-  git_absorb: false # "false", "git-local" or "git-remote"
+  git_absorb: git-local # "false", "git-local" or "git-remote"
 cache:
   enabled: true
   key: pragmarx-version

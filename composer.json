@@ -6,14 +6,16 @@
     "type": "project",
     "require": {
         "php": "^7.1.3",
+        "barryvdh/laravel-debugbar": "^3.1",
+        "consoletvs/charts": "6.*",
         "fideloper/proxy": "^4.0",
         "laravel/framework": "5.6.*",
         "laravel/tinker": "^1.0",
         "liebig/cron": "^1.2",
-        "planetteamspeak/ts3-php-framework": "^1.1"
+        "planetteamspeak/ts3-php-framework": "^1.1",
+        "pragmarx/version": "^0.2.8"
     },
     "require-dev": {
-        "barryvdh/laravel-debugbar": "^3.1",
         "barryvdh/laravel-ide-helper": "^2.4",
         "doctrine/dbal": "^2.8",
         "filp/whoops": "^2.0",
@@ -51,7 +53,8 @@
         ],
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
-            "@php artisan package:discover"
+            "@php artisan package:discover",
+ 	    "@php artisan version:refresh"
         ]
     },
     "config": {

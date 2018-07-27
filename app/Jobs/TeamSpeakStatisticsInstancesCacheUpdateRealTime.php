@@ -1,12 +1,12 @@
 <?php
 
-namespace Api\Jobs;
+namespace App\Jobs;
 
-use Redis;
+use Illuminate\Support\Facades\Redis;
 use Illuminate\Bus\Queueable;
-use Api\Traits\RestHelperTrait;
-use Api\Exceptions\InvalidJSON;
-use Api\StatisticsTeamspeakInstances;
+use App\Traits\RestHelperTrait;
+use App\Exceptions\InvalidJSON;
+use App\StatisticsTeamspeakInstances;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -32,10 +32,10 @@ class TeamSpeakStatisticsInstancesCacheUpdateRealTime implements ShouldQueue {
 	 * @return void
 	 */
 	public function handle() {
-		$redis = Redis::connection();
+	//	$redis = Redis::connection();
 
 		try {
-			$InitialSearchDate = $this->JsonDecodeAndValidate( $redis->lpop( "ts:stat:$this->instance_id:real_time" ) )->created_at;
+			$InitialSearchDate = $this->JsonDecodeAndValidate( Redis::lpop( "ts:stat:$this->instance_id:real_time" ) )->created_at;
 		} catch ( InvalidJSON $e ) {
 			$InitialSearchDate = null;
 		}
@@ -47,8 +47,8 @@ class TeamSpeakStatisticsInstancesCacheUpdateRealTime implements ShouldQueue {
 		}
 
 		foreach ( $data as $item ) {
-			$redis->lpush( "ts:stat:$this->instance_id:real_time", $item->toJson() );
-			$redis->ltrim( "ts:stat:$this->instance_id:real_time", 0, 60 );
+			Redis::lpush( "ts:stat:$this->instance_id:real_time", $item->toJson() );
+			Redis::ltrim( "ts:stat:$this->instance_id:real_time", 0, 60 );
 		}
 	}
 }
