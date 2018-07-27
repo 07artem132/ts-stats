@@ -6,5 +6,5 @@
 2) npm install
 
 ## Зависимости
-1) php 7.2
-2) redis
+* php 7.2
+* redis
