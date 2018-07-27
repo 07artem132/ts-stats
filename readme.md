@@ -5,6 +5,6 @@
 1) composer install
 2) npm install
 
-##Зависимости
-php 7.2<br/>
-redis
+## Зависимости
+1) php 7.2
+2) redis
