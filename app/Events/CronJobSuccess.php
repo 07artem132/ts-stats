@@ -19,7 +19,7 @@ class CronJobSuccess
     public $name;
     public $runtime;
     public $rundate;
-    public $task_id;
+    public $tasks_id;
 
     /**
      * Create a new event instance.
@@ -31,7 +31,7 @@ class CronJobSuccess
         $this->name = $name;
         $this->runtime = $runtime;
         $this->rundate = $rundate;
-        $this->task_id = Task::where('name', '=', $name)->first()->id;
+        $this->tasks_id = Task::where('name', '=', $name)->first()->id;
     }
 
     /**

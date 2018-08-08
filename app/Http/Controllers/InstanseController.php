@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\TeamspeakInstances;
+use App\Instance;
 use  \Illuminate\View\View;
 use \Illuminate\Http\RedirectResponse;
 
@@ -19,7 +19,7 @@ class InstanseController extends Controller {
 	 * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
 	 */
 	public function list(): View {
-		return view( 'InstanseList', [ 'Instanses' => TeamspeakInstances::all() ] );
+		return view( 'InstanseList', [ 'Instanses' => Instance::all() ] );
 	}
 
 	/**
@@ -28,7 +28,7 @@ class InstanseController extends Controller {
 	 * @return \Illuminate\Http\RedirectResponse
 	 */
 	function activate( Request $request ): RedirectResponse {
-		$TeamspeakInstances             = TeamspeakInstances::find( $request->id );
+		$TeamspeakInstances             = Instance::find( $request->id );
 		$TeamspeakInstances->is_enabled = 1;
 		$TeamspeakInstances->save();
 
@@ -41,7 +41,7 @@ class InstanseController extends Controller {
 	 * @return \Illuminate\Http\RedirectResponse
 	 */
 	function deactivate( Request $request ): RedirectResponse {
-		$TeamspeakInstances             = TeamspeakInstances::find( $request->id );
+		$TeamspeakInstances             = Instance::find( $request->id );
 		$TeamspeakInstances->is_enabled = 0;
 		$TeamspeakInstances->save();
 
@@ -55,7 +55,7 @@ class InstanseController extends Controller {
 	 * @throws \Exception
 	 */
 	function delete( Request $request ): RedirectResponse {
-		TeamspeakInstances::find( $request->id )->delete();
+		Instance::find( $request->id )->delete();
 
 		return redirect()->back();
 	}
@@ -73,7 +73,7 @@ class InstanseController extends Controller {
 	 * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
 	 */
 	function edit( Request $request ): View {
-		$config = TeamspeakInstances::find( $request->id );
+		$config = Instance::find( $request->id );
 
 		return view( 'EditInstanse', [ 'config' => $config ] );
 
@@ -86,10 +86,8 @@ class InstanseController extends Controller {
 	 * @throws \Throwable
 	 */
 	function update( Request $request ): RedirectResponse {
-		$TeamspeakInstances            = TeamspeakInstances::find( $request->id );
-		$TeamspeakInstances->name      = $request->input( 'name' );
+		$TeamspeakInstances            = Instance::find( $request->id );
 		$TeamspeakInstances->ipaddress = $request->input( 'ip' );
-		$TeamspeakInstances->hostname  = $request->input( 'hostname' );
 		$TeamspeakInstances->username  = $request->input( 'Login' );
 		$TeamspeakInstances->password  = $request->input( 'passwd' );
 		$TeamspeakInstances->port      = $request->input( 'port' );
@@ -112,10 +110,8 @@ class InstanseController extends Controller {
 	 */
 	public function store( Request $request ): RedirectResponse {
 
-		$TeamspeakInstances            = new TeamspeakInstances();
-		$TeamspeakInstances->name      = $request->input( 'name' );
+		$TeamspeakInstances            = new Instance();
 		$TeamspeakInstances->ipaddress = $request->input( 'ip' );
-		$TeamspeakInstances->hostname  = $request->input( 'hostname' );
 		$TeamspeakInstances->username  = $request->input( 'Login' );
 		$TeamspeakInstances->password  = $request->input( 'passwd' );
 		$TeamspeakInstances->port      = $request->input( 'port' );

@@ -1,4 +1,3 @@
-
 /**
  * First we will load all of this project's JavaScript dependencies which
  * includes Vue and other libraries. It is a great starting point when
@@ -6,6 +5,7 @@
  */
 
 require('./bootstrap');
+window.$.selectpicker = require('bootstrap-select');
 
 window.Vue = require('vue');
 
@@ -20,3 +20,4 @@ Vue.component('example-component', require('./components/ExampleComponent.vue'))
 const app = new Vue({
     el: '#app'
 });
+

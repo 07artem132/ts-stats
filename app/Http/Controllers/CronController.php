@@ -19,7 +19,7 @@ class CronController extends Controller {
 	 * @return \Illuminate\Contracts\View\Factory|View
 	 */
 	function log( Request $request ): View {
-		$logs = TaskLog::where( 'task_id', '=', $request->id )->orderBy( 'id', 'desc' )->paginate( 30 );
+		$logs = TaskLog::where( 'tasks_id', '=', $request->id )->orderBy( 'id', 'desc' )->paginate( $request->input('limit',10) );
 
 		return view( 'cronLog', [ 'logs' => $logs ] );
 	}

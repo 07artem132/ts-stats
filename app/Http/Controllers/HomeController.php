@@ -3,7 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Charts\StatisticsTeamspeakInstancesRealTimeCharts;
+use App\Charts\StatisticsInstancesRealTimeCharts;
+use App\Charts\StatisticUsageClientVersionMonthCharts;
+use App\Charts\StatisticClientByCountryMonthCharts;
+
+
 use  \Illuminate\View\View;
 
 class HomeController extends Controller {
@@ -21,9 +25,15 @@ class HomeController extends Controller {
 	 *
 	 * @return \Illuminate\Http\Response
 	 */
-	public function index():View {
-		$chart = new StatisticsTeamspeakInstancesRealTimeCharts;
+	public function index(): View {
+		$realTimeCharts     = new StatisticsInstancesRealTimeCharts;
+		$usageClientVersion = new StatisticUsageClientVersionMonthCharts;
+		$ClientByContry     = new StatisticClientByCountryMonthCharts;
 
-		return view( 'home', [ 'chart' => $chart ] );
+		return view( 'home', [
+			'realTimeCharts'     => $realTimeCharts,
+			'usageClientVersion' => $usageClientVersion,
+			'ClientByContry'     => $ClientByContry,
+		] );
 	}
 }

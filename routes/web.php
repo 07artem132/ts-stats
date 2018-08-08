@@ -17,6 +17,32 @@ Route::get( '/', function () {
 
 Auth::routes();
 
+Route::get( '/charts/instance/real-time', function () {
+	if ( class_exists( '\Debugbar' ) ) {
+		\Debugbar::disable();
+	}
+	$realTimeCharts = new  App\Charts\StatisticsInstancesRealTimeCharts();
+
+	return response( $realTimeCharts->response() );
+} );
+
+Route::get( '/charts/client/version/month', function () {
+	if ( class_exists( '\Debugbar' ) ) {
+		\Debugbar::disable();
+	}
+	$usageClientVersion = new  App\Charts\StatisticUsageClientVersionMonthCharts();
+
+	return response( $usageClientVersion->response() );
+} );
+Route::get( '/charts/client/country/month', function () {
+	if ( class_exists( '\Debugbar' ) ) {
+		\Debugbar::disable();
+	}
+	$clientFromTheCountry = new  App\Charts\StatisticClientByCountryMonthCharts();
+
+	return response( $clientFromTheCountry->response() );
+} );
+
 Route::get( '/home', 'HomeController@index' )->name( 'home' );
 
 Route::get( '/list', 'InstanseController@list' )->name( 'list' );
@@ -36,4 +62,5 @@ Route::get( '/cron/{id}/activate', 'CronController@activate' )->name( 'CronActiv
 Route::get( '/cron/{id}/deactivate', 'CronController@deactivate' )->name( 'CronDeactivate' );
 
 
-Route::get( '/api', 'ApiController@log' )->name( 'ApiConfig' );
+Route::get( '/api/tokens', 'ApiTokensController@list' )->name( 'ApiTokenList' );
+Route::get( '/api/tokens/add', 'ApiTokensController@add' )->name( 'AddApiToken' );

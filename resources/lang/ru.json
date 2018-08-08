@@ -1,5 +1,11 @@
 {
   "Login": "Войти",
   "Register": "регистрация",
-  "Logout": "Выйти"
+  "Logout": "Выйти",
+  "Password":"Пароль",
+  "E-Mail Address":"E-Mail адрес",
+  "Remember Me":"Запомнить",
+  "Forgot Your Password?":"Забыли пароль ?",
+  "Name":"Имя",
+  "Confirm Password":"Повторите пароль"
 }

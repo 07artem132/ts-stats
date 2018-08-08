@@ -12,10 +12,6 @@
 
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}" defer></script>
-    @if(isset($chart))
-        {!! $chart->script() !!}
-        <script src=//cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js charset=utf-8></script>
-    @endif
 <!-- Fonts -->
     <link rel="dns-prefetch" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css?family=Raleway:300,400,600" rel="stylesheet" type="text/css">
@@ -62,14 +58,18 @@
                                 <a class="dropdown-item" href="{{ route('home') }}">
                                     Сводка
                                 </a>
+                                <a class="dropdown-item" href="{{ url('horizon') }}">
+                                    Сводка по воркерам
+                                </a>
+
                                 <a class="dropdown-item" href="{{ route('list') }}">
                                     Список TeamSpeak 3 инстансов
                                 </a>
                                 <a class="dropdown-item" href="{{ route('Cron') }}">
                                     Планировщик задач
                                 </a>
-                                <a class="dropdown-item" href="{{ route('ApiConfig') }}">
-                                    Настройка API
+                                <a class="dropdown-item" href="{{ route('ApiTokenList') }}">
+                                    API токены
                                 </a>
 
                                 <a class="dropdown-item" href="{{ route('logout') }}"

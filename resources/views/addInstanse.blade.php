@@ -11,16 +11,8 @@
                         <form method="POST">
                             @csrf
                             <div class="form-group">
-                                <label for="name">Имя</label>
-                                <input type="text" class="form-control" name="name" id="name">
-                            </div>
-                            <div class="form-group">
                                 <label for="ip">IP адрес</label>
                                 <input type="text" class="form-control" name="ip" id="ip">
-                            </div>
-                            <div class="form-group">
-                                <label for="hostname">hostname инстанса</label>
-                                <input type="text" class="form-control" name="hostname" id="hostname">
                             </div>
                             <div class="form-group">
                                 <label for="Login">Логин</label>
