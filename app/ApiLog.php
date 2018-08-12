@@ -22,6 +22,8 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\ApiLog whereToken($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\ApiLog whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @property int $tokens_id
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\ApiLog whereTokensId($value)
  */
 class ApiLog extends Model
 {

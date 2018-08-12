@@ -8,12 +8,12 @@
 
 namespace App\Task;
 
+use App\Instance;
+use App\Jobs\StatisticsInstancesCacheUpdateHour;
 use App\Jobs\StatisticsInstancesCacheUpdateDay;
 use App\Jobs\StatisticsInstancesCacheUpdateMonth;
 use App\Jobs\StatisticsInstancesCacheUpdateWeek;
 use App\Jobs\StatisticsInstancesCacheUpdateYear;
-use App\Instance;
-use App\Jobs\StatisticsInstancesCacheUpdateRealTime;
 
 /**
  * Class StatisticsInstancesCacheUpdateTask
@@ -54,6 +54,6 @@ class StatisticsInstancesCacheUpdateTask {
 	}
 
 	function CacheRealTime( $instance_id ) {
-		StatisticsInstancesCacheUpdateRealTime::dispatch( $instance_id );
+		StatisticsInstancesCacheUpdateHour::dispatch( $instance_id );
 	}
 }

@@ -34,6 +34,9 @@ use DB;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\StatisticInstances whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\StatisticInstances whereUsersOnline($value)
  * @mixin \Eloquent
+ * @property int $instances_id
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\StatisticInstances minutesAvage()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\StatisticInstances whereInstancesId($value)
  */
 class StatisticInstances extends Model
 {
@@ -112,6 +115,11 @@ class StatisticInstances extends Model
 				date( "Y-m-d H:i:s" )
 			] )->orderBy( 'created_at' );
 		}
+	}
+	function scopeMinutesAvage( $query ) {
+		return $query
+			->select( DB::raw( 'avg(slot_usage) as slot_usage ,avg(user_online) as user_online,avg(avg_ping) as avg_ping,avg(avg_packetloss) as avg_packetloss,created_at' ) )
+			->groupBy( DB::raw( 'floor((unix_timestamp(created_at))/60 ),hour(created_at)' ) );
 	}
 
 	function scopeFiveMinutesAvage( $query ) {

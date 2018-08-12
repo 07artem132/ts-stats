@@ -3,16 +3,12 @@
 namespace App\Charts;
 
 use App\ClientContry;
-use App\ClientVersion;
-use App\StatisticInstance;
 use Illuminate\Support\Collection;
 use ConsoleTVs\Charts\Classes\Chartjs\Chart;
-use \Debugbar;
+use Illuminate\Support\Facades\Redis;
 
 class StatisticClientByCountryMonthCharts extends Chart {
-	/**
-	 * @var StatisticInstance
-	 */
+
 	private $StatisticsClientCountry;
 
 	/**
@@ -22,30 +18,65 @@ class StatisticClientByCountryMonthCharts extends Chart {
 	 */
 	public function __construct() {
 		parent::__construct();
-
-		$this->setOptions();
-		$this->setLabels();
-		$this->load( url( '/charts/client/country/month' ) );
-	}
-
-	function response() {
-		Debugbar::startMeasure( 'Форматирование и загрузка статистики по странам клиентов' );
+		$this->redis                   = Redis::connection();
 		$this->StatisticsClientCountry = $this->getStatistics();
-		Debugbar::stopMeasure( 'Форматирование и загрузка статистики по странам клиентов' );
 		$this->setDataClientCountry();
-
-		return $this->api();
+		$this->setLabels();
+		$this->setOptions();
 	}
 
 	private function getStatistics(): Collection {
-		$result     = ClientContry::select( [ 'id' ] )->get();
 		$statistics = collect();
 
-		foreach ( $result as $item ) {
-			$statistics[] = [
-				'fromTheCountry'     => $item->clientFromTheCountryMonth(),
-			];
+		$result = $this->redis->command( 'HGETALL', [
+			config( 'cache.prefix' ) . ':clientCountry'
+		] );
+
+		if ( empty( $result ) ) {
+			$result = ClientContry::all()->sortBy( 'id' )->pluck( 'id' );
+		} else {
+			$result = array_flip( $result );
+			ksort( $result );
+			$result = array_flip( $result );
 		}
+
+		foreach ( $result as $item ) {
+			$response = $this->redis->command( 'hget', [
+				config( 'cache.prefix' ) . ':StatisticsClientCountry',
+				$item
+			] );
+			if ( $response === false ) {
+				$response = (int) ClientContry::findOrFail( $item )->clientFromTheCountryMonth();
+
+				$this->redis->command( 'hset', [
+					config( 'cache.prefix' ) . ':StatisticsClientCountry',
+					$item,
+					$response
+				] );
+			}
+
+			$statistics[] = collect( [
+				'country_id' => $item,
+				'use'        => (int) $response
+			] );
+		}
+
+		$statistics   = $statistics->sortByDesc( 'use' );
+		$other        = $statistics->splice( 5 );
+		$statistics[] = collect( [
+			'country' => 'Остальные',
+			'use'     => (int) $other->sum( 'use' )
+		] );
+
+		$ClientCountry = ClientContry::whereIn( 'id', $statistics->pluck( 'country_id' ) )->get()->getDictionary();
+
+		for ( $i = 0; $i < $statistics->count(); $i ++ ) {
+			if ( ! $statistics[ $i ]->has( 'country' ) ) {
+				$statistics[ $i ]['country'] = $ClientCountry[ $statistics[ $i ]['country_id'] ]->country;
+				unset( $statistics[ $i ]['country_id'] );
+			}
+		}
+		unset($ClientCountry);
 
 		return $statistics;
 	}
@@ -89,44 +120,22 @@ class StatisticClientByCountryMonthCharts extends Chart {
 	}
 
 	private function setDataClientCountry(): void {
-		$this->dataset( 'Sample', 'pie', $this->StatisticsClientCountry->pluck( 'fromTheCountry' ) )->options( [
+		$this->dataset( 'Sample', 'pie', $this->StatisticsClientCountry->pluck( 'use' ) )->options( [
 			'backgroundColor' => [
-			/*	'#990000',
-				'#c30000',
-				'#ee0000',
-				'#ff1a00',
-				'#ff4600',
-				'#ff7300',
-				'#ff9f00',
-				'#ffcb00',
-				'#fff700',
-				'#e3f408',
-				'#c3e711',
-				'#a3da1b',
-				'#83cd25',
-				'#63c02e',
-				'#42b338',
-				'#22a642',
-				'#029a4b',
-				'#0c876a',
-				'#1a758a',
-				'#2863aa',
-				'#3650cb',
-				'#443eeb',
-				'#612aff',
-				'#9615ff',
-				'#cc00ff',
-				'#5da5a1',
-				'#c45331',
-				'#e79609',
-				'#f6e84a',
-				'#b1a2a7',
-				'#c9a784',
-				'#8c7951',
-				'#d8cdb7',
-				'#086553',
-				'#f7d87b',
-				'#016484',*/
+				'#3366cc',
+				'#dc3912',
+				'#ff9900',
+				'#109618',
+				'#990099',
+				'#0099c6',
+				'#dd4477',
+				'#6a0',
+				'#b82e2e',
+				'#316395',
+				'#994499',
+				'#2a9',
+				'#f00',
+
 
 			],
 		] );
@@ -134,8 +143,7 @@ class StatisticClientByCountryMonthCharts extends Chart {
 
 
 	private function setLabels(): void {
-		$result = ClientContry::select( [ 'country' ] )->get();
 
-		$this->labels( $result->pluck( 'country' ) );
+		$this->labels( $this->StatisticsClientCountry->pluck( 'country' ) );
 	}
 }

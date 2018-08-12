@@ -18,34 +18,11 @@ class InstanseController extends Controller {
 	/**
 	 * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
 	 */
-	public function list(): View {
-		return view( 'InstanseList', [ 'Instanses' => Instance::all() ] );
-	}
+	public function list(Request $request): View {
+		$instances = Instance::orderBy( 'id' )->paginate( $request->input('limit',10) );
 
-	/**
-	 * @param Request $request
-	 *
-	 * @return \Illuminate\Http\RedirectResponse
-	 */
-	function activate( Request $request ): RedirectResponse {
-		$TeamspeakInstances             = Instance::find( $request->id );
-		$TeamspeakInstances->is_enabled = 1;
-		$TeamspeakInstances->save();
 
-		return redirect()->back();
-	}
-
-	/**
-	 * @param Request $request
-	 *
-	 * @return \Illuminate\Http\RedirectResponse
-	 */
-	function deactivate( Request $request ): RedirectResponse {
-		$TeamspeakInstances             = Instance::find( $request->id );
-		$TeamspeakInstances->is_enabled = 0;
-		$TeamspeakInstances->save();
-
-		return redirect()->back();
+		return view( 'InstanseList', [ 'instances' => $instances ] );
 	}
 
 	/**

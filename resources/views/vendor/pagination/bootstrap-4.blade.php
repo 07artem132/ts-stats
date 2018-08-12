@@ -42,7 +42,7 @@
         @endif
     </ul>
     <form method="get">
-     <select name="limit" onchange="this.form.submit()" class="selectpicker show-tick" data-width="350px" data-style="show-menu-arrow  btn-white" title="Сколько последних записей отображать ?">
+     <select name="limit" onchange="this.form.submit()" class="selectpicker show-tick" data-width="350px" data-style="show-menu-arrow  btn-white" title="Сколько записей отображать ?">
         <option>10</option>
         <option>25</option>
         <option>50</option>

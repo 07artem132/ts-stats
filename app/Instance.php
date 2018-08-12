@@ -149,8 +149,8 @@ class Instance extends Model
 			->groupBy( DB::raw( 'MONTH(created_at), DAYOFMONTH(created_at)' ) );
 	}
 
-	public function instance() {
-		return $this->belongsTo( 'App\Instance', 'id', 'instance_id' );
+	public function InstanceVirtualServers() {
+		return $this->hasMany( 'App\InstanceVirtualServer', 'instances_id', 'id' );
 	}
 
 }

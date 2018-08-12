@@ -50,7 +50,7 @@ class InstanceStatisticsCollections implements ShouldQueue {
 	}
 
 	public function tags() {
-		return [ 'Statistic collections', 'instance:' . $this->instance_id ];
+		return [ 'Statistic collections instance', 'instance:' . $this->instance_id ];
 	}
 
 }

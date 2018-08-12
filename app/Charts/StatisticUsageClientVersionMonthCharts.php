@@ -3,15 +3,11 @@
 namespace App\Charts;
 
 use App\ClientVersion;
-use App\StatisticInstance;
 use Illuminate\Support\Collection;
 use ConsoleTVs\Charts\Classes\Chartjs\Chart;
-use \Debugbar;
+use Illuminate\Support\Facades\Redis;
 
 class StatisticUsageClientVersionMonthCharts extends Chart {
-	/**
-	 * @var StatisticInstance
-	 */
 	private $StatisticsClientVersions;
 
 	/**
@@ -21,30 +17,65 @@ class StatisticUsageClientVersionMonthCharts extends Chart {
 	 */
 	public function __construct() {
 		parent::__construct();
-
-		$this->setOptions();
-		$this->setLabels();
-		$this->load( url( '/charts/client/version/month' ) );
-	}
-
-	function response() {
-		Debugbar::startMeasure( 'Форматирование и загрузка статистики по версииям клиентов' );
+		$this->redis                    = Redis::connection();
 		$this->StatisticsClientVersions = $this->getStatistics();
-		Debugbar::stopMeasure( 'Форматирование и загрузка статистики по версииям клиентов' );
 		$this->setDataUseVersions();
-
-		return $this->api();
+		$this->setLabels();
+		$this->setOptions();
 	}
 
 	private function getStatistics(): Collection {
-		$result     = ClientVersion::select( [ 'id' ] )->get();
 		$statistics = collect();
 
-		foreach ( $result as $item ) {
-			$statistics[] = [
-				'use'     => $item->clientUseVersionMonth(),
-			];
+		$result = $this->redis->command( 'HGETALL', [
+			config( 'cache.prefix' ) . ':clientVersion'
+		] );
+
+		if ( empty( $result ) ) {
+			$result = ClientVersion::all()->sortBy( 'id' )->pluck( 'id' );
+		} else {
+			$result = array_flip( $result );
+			ksort( $result );
+			$result = array_flip( $result );
 		}
+
+		foreach ( $result as $item ) {
+			$response = $this->redis->command( 'hget', [
+				config( 'cache.prefix' ) . ':StatisticsClientVersion',
+				$item
+			] );
+			if ( $response === false ) {
+				$response = (int) ClientVersion::findOrFail( $item )->clientUseVersionMonth();
+
+				$this->redis->command( 'hset', [
+					config( 'cache.prefix' ) . ':StatisticsClientVersion',
+					$item,
+					$response
+				] );
+			}
+
+			$statistics[] = collect( [
+				'version_id' => $item,
+				'use'        => (int) $response
+			] );
+		}
+
+		$statistics   = $statistics->sortByDesc( 'use' );
+		$other        = $statistics->splice( 6 );
+		$statistics[] = collect( [
+			'version' => 'Остальные',
+			'use'     => (int) $other->sum( 'use' )
+		] );
+
+		$ClientVersion = ClientVersion::whereIn( 'id', $statistics->pluck( 'version_id' ) )->get()->getDictionary();
+
+		for ( $i = 0; $i < $statistics->count(); $i ++ ) {
+			if ( ! $statistics[ $i ]->has( 'version' ) ) {
+				$statistics[ $i ]['version'] = $ClientVersion[ $statistics[ $i ]['version_id'] ]->major . '.' . $ClientVersion[ $statistics[ $i ]['version_id'] ]->minor . '.' . $ClientVersion[ $statistics[ $i ]['version_id'] ]->patch;
+				unset( $statistics[ $i ]['version_id'] );
+			}
+		}
+		unset( $ClientVersion );
 
 		return $statistics;
 	}
@@ -90,49 +121,25 @@ class StatisticUsageClientVersionMonthCharts extends Chart {
 	private function setDataUseVersions(): void {
 		$this->dataset( 'Sample', 'pie', $this->StatisticsClientVersions->pluck( 'use' ) )->options( [
 			'backgroundColor' => [
-			/*	'#507e32',
-				'#2f528f',
-				'#bc8c00',
-				'#787878',
-				'#ae5a21',
-				'#41719c',
-				'#aaaaaa',
-				'#c9dbc1',
-				'#c0c9e4',
-				'#ffe2bc',
-				'#d8d8d8',
-				'#f6ccbe',
-				'#c4d5eb',
-				'#a4c0e3',
-				'#f3b29a',
-				'#c6c6c6',
-				'#ffd695',
-				'#9eadd8',
-				'#acca9e',
-				'#dadada',
-				'#5694cb',
-				'#e2772e',
-				'#9d9d9d',
-				'#ffd695',
-				'#5f5f5f',
-				'#212121',
-				'#ffc859',
-				'#88b76e',*/
+				'#3366cc',
+				'#dc3912',
+				'#ff9900',
+				'#109618',
+				'#990099',
+				'#0099c6',
+				'#dd4477',
+				'#6a0',
+				'#b82e2e',
+				'#316395',
+				'#994499',
+				'#2a9',
+				'#f00',
 			],
 		] );
 	}
 
-
 	private function setLabels(): void {
-		$result     = ClientVersion::select( [ 'id', 'major', 'minor', 'patch' ] )->get();
-		$statistics = collect();
 
-		foreach ( $result as $item ) {
-			$statistics[] = [
-				'version' => $item->major . '.' . $item->minor . '.' . $item->patch
-			];
-		}
-
-		$this->labels( $statistics->pluck( 'version' ) );
+		$this->labels( $this->StatisticsClientVersions->pluck( 'version' ) );
 	}
 }

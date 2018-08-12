@@ -17,39 +17,20 @@ Route::get( '/', function () {
 
 Auth::routes();
 
-Route::get( '/charts/instance/real-time', function () {
-	if ( class_exists( '\Debugbar' ) ) {
-		\Debugbar::disable();
-	}
-	$realTimeCharts = new  App\Charts\StatisticsInstancesRealTimeCharts();
-
-	return response( $realTimeCharts->response() );
-} );
-
-Route::get( '/charts/client/version/month', function () {
-	if ( class_exists( '\Debugbar' ) ) {
-		\Debugbar::disable();
-	}
-	$usageClientVersion = new  App\Charts\StatisticUsageClientVersionMonthCharts();
-
-	return response( $usageClientVersion->response() );
-} );
-Route::get( '/charts/client/country/month', function () {
-	if ( class_exists( '\Debugbar' ) ) {
-		\Debugbar::disable();
-	}
-	$clientFromTheCountry = new  App\Charts\StatisticClientByCountryMonthCharts();
-
-	return response( $clientFromTheCountry->response() );
-} );
-
 Route::get( '/home', 'HomeController@index' )->name( 'home' );
+
+//todo add route user-list
+Route::get( '/users', 'UserController@list' )->name( 'user list' );
+Route::get( '/users/{id/delete}', 'UserController@list' )->name( 'delete' );
+Route::get( '/users/{id}/admin', 'UserController@list' )->name( 'change admin status' );
+
+
+Route::get( '/list/statistics/', 'InstanceStatisticsController@list' )->name( 'instanceStatistics' );
+
 
 Route::get( '/list', 'InstanseController@list' )->name( 'list' );
 Route::get( '/add', 'InstanseController@add' );
 Route::post( '/add', 'InstanseController@store' )->name( 'add' );
-Route::get( '/{id}/activate', 'InstanseController@activate' );
-Route::get( '/{id}/deactivate', 'InstanseController@deactivate' );
 Route::get( '/{id}/delete', 'InstanseController@delete' );
 Route::get( '/{id}/edit', 'InstanseController@edit' );
 Route::post( '/{id}/edit', 'InstanseController@update' );

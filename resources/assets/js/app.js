@@ -6,6 +6,8 @@
 
 require('./bootstrap');
 window.$.selectpicker = require('bootstrap-select');
+window.Chart = require('chart.js');
+window.Chart.Zoom = require('chartjs-plugin-zoom');
 
 window.Vue = require('vue');
 

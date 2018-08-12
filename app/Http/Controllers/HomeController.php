@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Instance;
+use App\ClientContry;
 use Illuminate\Http\Request;
-use App\Charts\StatisticsInstancesRealTimeCharts;
+use App\Charts\StatisticsInstanceCharts;
 use App\Charts\StatisticUsageClientVersionMonthCharts;
 use App\Charts\StatisticClientByCountryMonthCharts;
-
+use App\Charts\StatisticPopularServerConfigSlotsMonthCharts;
+use App\Charts\StatisticTopClientPlatformMonthCharts;
+use Illuminate\Support\Facades\Redis;
 
 use  \Illuminate\View\View;
 
@@ -26,14 +30,18 @@ class HomeController extends Controller {
 	 * @return \Illuminate\Http\Response
 	 */
 	public function index(): View {
-		$realTimeCharts     = new StatisticsInstancesRealTimeCharts;
-		$usageClientVersion = new StatisticUsageClientVersionMonthCharts;
-		$ClientByContry     = new StatisticClientByCountryMonthCharts;
+		$realTimeCharts           = new StatisticsInstanceCharts;
+		$usageClientVersion       = new StatisticUsageClientVersionMonthCharts;
+		$ClientByContry           = new StatisticClientByCountryMonthCharts;
+		$PopularServerConfigSlots = new StatisticPopularServerConfigSlotsMonthCharts;
+		$TopPlatform              = new StatisticTopClientPlatformMonthCharts;
 
 		return view( 'home', [
-			'realTimeCharts'     => $realTimeCharts,
-			'usageClientVersion' => $usageClientVersion,
-			'ClientByContry'     => $ClientByContry,
+			'realTimeCharts'           => $realTimeCharts,
+			'usageClientVersion'       => $usageClientVersion,
+			'ClientByContry'           => $ClientByContry,
+			'PopularServerConfigSlots' => $PopularServerConfigSlots,
+			'TopPlatform'              => $TopPlatform,
 		] );
 	}
 }

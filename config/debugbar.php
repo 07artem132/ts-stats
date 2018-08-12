@@ -144,10 +144,7 @@ return [
 			'explain'     => [                 // Show EXPLAIN output on queries
 				'enabled' => true,
 				'types'   => [ // ['SELECT', 'INSERT', 'UPDATE', 'DELETE']; for MySQL 5.6.3+
-					'SELECT',
-					'INSERT',
-					'UPDATE',
-					'DELETE'
+					'SELECT'
 				],
 			],
 			'hints'       => true,    // Show hints for common mistakes

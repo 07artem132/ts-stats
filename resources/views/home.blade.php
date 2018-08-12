@@ -17,9 +17,15 @@
                         {!! $realTimeCharts->script() !!}
                         {!! $usageClientVersion->script() !!}
                         {!! $ClientByContry->script() !!}
+                        {!! $PopularServerConfigSlots->script() !!}
+                        {!! $TopPlatform->script() !!}
+
                         <div>{!! $realTimeCharts->container() !!}</div>
                         <div>{!! $usageClientVersion->container() !!}</div>
                         <div>{!! $ClientByContry->container() !!}</div>
+                        <div>{!! $PopularServerConfigSlots->container() !!}</div>
+                        <div>{!! $TopPlatform->container() !!}</div>
+
                     </div>
                 </div>
             </div>

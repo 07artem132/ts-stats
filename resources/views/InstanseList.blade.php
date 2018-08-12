@@ -21,34 +21,25 @@
                                 <th scope="col">IP</th>
                                 <th scope="col">Дата создания</th>
                                 <th scope="col">Дата последнего изменения</th>
-                                <th scope="col">Статус</th>
                                 <th scope="col"></th>
                                 <th scope="col"></th>
                             </tr>
                             </thead>
                             <tbody>
-                            @foreach ($Instanses as $Instanse)
+                            @foreach ($instances as $instance)
                                 <tr>
-                                    <th scope="row">{{ $Instanse->id }}  </th>
-                                    <td>   {{ $Instanse->ipaddress }}</td>
-                                    <td>   {{ $Instanse->created_at }}</td>
-                                    <td>   {{ $Instanse->updated_at }}</td>
-                                    @if ($Instanse->is_enabled == 1)
-                                        <td><a href="/{{$Instanse->id}}/deactivate"
-                                               title="Нажмите для деактивации">Активен</a></td>
-                                    @else
-                                        <td><a href="/{{$Instanse->id}}/activate"
-                                               title="Нажмите для активации">Отключен</a>
-                                        </td>
-                                    @endif
-                                    <td><a href="/{{$Instanse->id}}/delete">Удалить</a></td>
-                                    <td><a href="/{{$Instanse->id}}/edit">Редактировать</a></td>
+                                    <th scope="row">{{ $instance->id }}  </th>
+                                    <td>   {{ $instance->ipaddress }}</td>
+                                    <td>   {{ $instance->created_at }}</td>
+                                    <td>   {{ $instance->updated_at }}</td>
+                                    <td><a href="/{{$instance->id}}/edit">Редактировать</a></td>
+                                    <td><a href="/{{$instance->id}}/delete">Удалить</a></td>
                                 </tr>
                             @endforeach
 
                             </tbody>
                         </table>
-
+                        {{ $instances->links() }}
                     </div>
                 </div>
             </div>

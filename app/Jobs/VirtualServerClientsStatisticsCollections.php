@@ -42,45 +42,52 @@ class VirtualServerClientsStatisticsCollections implements ShouldQueue {
 	public function handle() {
 		$this->ts3con = new TeamSpeak( $this->instance_id );
 
-			try {
-		foreach ( $this->ts3con->ReturnConnection()->serverList() as $VirtualServer ) {
-			if ( (string) $VirtualServer['virtualserver_status'] != 'online' ) {
-				continue;
+		try {
+			foreach ( $this->ts3con->ReturnConnection()->serverList() as $VirtualServer ) {
+				try {
+					if ( (string) $VirtualServer['virtualserver_status'] != 'online' ) {
+						continue;
+					}
+
+					foreach ( $VirtualServer->clientlist() as $client ) {
+						if ( $client['client_type'] === 1 ) {
+							continue;
+						}
+
+						$client_country = (string) $client['client_country'];
+
+						if ( empty( $client_country ) ) {
+							$client_country = 'None';
+						}
+
+						$clientVersion = $this->ClientVersionParse( (string) $client['client_version'] );
+
+						if ( ! is_integer( $clientVersion['minor'] ) || ! is_integer( $clientVersion['patch'] ) ) {
+							continue;
+						}
+
+						$db                         = new StatisticVirtualServerClient();
+						$db->virtual_servers_id     = $this->getVirtualServerID( $VirtualServer['virtualserver_unique_identifier'], (int) $VirtualServer['virtualserver_port'] );
+						$db->clients_id             = $this->getClientID( (string) $client['client_unique_identifier'] );
+						$db->client_contries_id     = $this->getClientCountryID( $client_country );
+						$db->client_nicknames_id    = $this->getClientNicknameID( (string) $client['client_nickname'] );
+						$db->client_ip_addresses_id = $this->GetClientIpAddressID( (string) $client['connection_client_ip'] );
+						$db->client_platforms_id    = $this->getClientPlatformID( (string) $client['client_platform'] );
+						$db->client_versions_id     = $this->GetClientVersionID(
+							$clientVersion['major'],
+							$clientVersion['minor'],
+							$clientVersion['patch'],
+							$clientVersion['build']
+						);
+						$db->saveOrFail();
+					}
+				} catch ( \Exception $e ) {
+					if ( $e->getMessage() === 'server maxclient reached' ) {
+						continue;
+					}
+					throw new \Exception( $e->getMessage() );
+				}
 			}
-
-			foreach ( $VirtualServer->clientlist() as $client ) {
-				if ( $client['client_type'] === 1 ) {
-					continue;
-				}
-
-				$client_country = (string) $client['client_country'];
-
-				if ( empty( $client_country ) ) {
-					$client_country = 'None';
-				}
-
-				$clientVersion = $this->ClientVersionParse( (string) $client['client_version'] );
-
-				if ( ! is_integer( $clientVersion['minor'] ) || ! is_integer( $clientVersion['patch'] ) ) {
-					continue;
-				}
-
-				$db                         = new StatisticVirtualServerClient();
-				$db->virtual_servers_id     = $this->getVirtualServerID( $VirtualServer['virtualserver_unique_identifier'], (int) $VirtualServer['virtualserver_port'] );
-				$db->clients_id             = $this->getClientID( (string) $client['client_unique_identifier'] );
-				$db->client_contries_id     = $this->getClientCountryID( $client_country );
-				$db->client_nicknames_id    = $this->getClientNicknameID( (string) $client['client_nickname'] );
-				$db->client_ip_addresses_id = $this->GetClientIpAddressID( (string) $client['connection_client_ip'] );
-				$db->client_platforms_id    = $this->getClientPlatformID( (string) $client['client_platform'] );
-				$db->client_versions_id     = $this->GetClientVersionID(
-					$clientVersion['major'],
-					$clientVersion['minor'],
-					$clientVersion['patch'],
-					$clientVersion['build']
-				);
-				$db->saveOrFail();
-			}
-		}
 		} catch ( \Exception $e ) {
 			if ( $e->getMessage() === 'database empty result set' ) {
 				$this->ts3con->logout();
@@ -247,10 +254,10 @@ class VirtualServerClientsStatisticsCollections implements ShouldQueue {
 		$build = (int) substr( substr( $build, 0, - 1 ), 7 );
 
 		return [
-			'major' => $major,
-			'minor' => $minor,
-			'patch' => $patch,
-			'build' => $build,
+			'major' => (int) $major,
+			'minor' => (int) $minor,
+			'patch' => (int) $patch,
+			'build' => (int) $build,
 		];
 	}
 

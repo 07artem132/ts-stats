@@ -17,7 +17,7 @@ use App\VirtualServer;
 class VirtualServerStatisticsCollections implements ShouldQueue {
 	use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-	private $instance_id,$ts3con;
+	private $instance_id, $ts3con;
 
 	/**
 	 * Create a new job instance.
@@ -38,20 +38,27 @@ class VirtualServerStatisticsCollections implements ShouldQueue {
 
 		try {
 			foreach ( $this->ts3con->ReturnConnection()->serverList() as $VirtualServer ) {
-				if ( (string) $VirtualServer['virtualserver_status'] != 'online' ) {
-					continue;
-				}
+				try {
+					if ( (string) $VirtualServer['virtualserver_status'] != 'online' ) {
+						continue;
+					}
 
-				$db                     = new StatisticVirtualServer;
-				$db->virtual_servers_id = $this->getVirtualServerID( (string) $VirtualServer['virtualserver_unique_identifier'] , (int) $VirtualServer['virtualserver_port']);
-				$db->user_online        = $VirtualServer['virtualserver_clientsonline'];
-				$db->slot_usage         = $VirtualServer['virtualserver_maxclients'];
-				$db->avg_ping           = $VirtualServer['virtualserver_total_ping'];
-				$db->avg_packetloss     = $VirtualServer['virtualserver_total_packetloss_total'];
-				$db->saveOrFail();
+					$db                     = new StatisticVirtualServer;
+					$db->virtual_servers_id = $this->getVirtualServerID( (string) $VirtualServer['virtualserver_unique_identifier'], (int) $VirtualServer['virtualserver_port'] );
+					$db->user_online        = $VirtualServer['virtualserver_clientsonline'];
+					$db->slot_usage         = $VirtualServer['virtualserver_maxclients'];
+					$db->avg_ping           = $VirtualServer['virtualserver_total_ping'];
+					$db->avg_packetloss     = $VirtualServer['virtualserver_total_packetloss_total'];
+					$db->saveOrFail();
+				} catch ( \Exception $e ) {
+					if ( $e->getMessage() === 'server maxclient reached' ) {
+						continue;
+					}
+					throw new \Exception( $e->getMessage() );
+				}
 			}
 		} catch ( \Exception $e ) {
-			if ( $e->getMessage() === 'database empty result set' || $e->getMessage() === 'server maxclient reached'  ) {
+			if ( $e->getMessage() === 'database empty result set' ) {
 				$this->ts3con->logout();
 
 				return;
@@ -66,7 +73,7 @@ class VirtualServerStatisticsCollections implements ShouldQueue {
 	 *
 	 * @return int
 	 */
-	public function getVirtualServerID( string $uid,int $port ): int {
+	public function getVirtualServerID( string $uid, int $port ): int {
 		$return = Redis::hget( config( 'cache.prefix' ) . ':instance:' . $this->instance_id . ':VirtualServersList', $uid );
 
 		if ( $return === false ) {

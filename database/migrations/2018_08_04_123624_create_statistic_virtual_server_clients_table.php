@@ -22,7 +22,8 @@ class CreateStatisticVirtualServerClientsTable extends Migration {
 			$table->integer('client_ip_addresses_id')->unsigned()->index('fk_statistics_virtual_server_clients_client_ip_addresses_idx');
 			$table->integer('client_platforms_id')->unsigned()->index('fk_statistics_virtual_server_clients_client_platforms1_idx');
 			$table->integer('client_versions_id')->unsigned()->index('fk_statistics_virtual_server_clients_client_versions1_idx');
-			$table->timestamps();
+			$table->timestamp('created_at', 0)->nullable()->index('idx_statistic_virtual_server_clients_created_at');
+			$table->timestamp('updated_at', 0)->nullable();
 		});
 	}
 

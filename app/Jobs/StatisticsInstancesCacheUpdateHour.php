@@ -5,14 +5,13 @@ namespace App\Jobs;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Bus\Queueable;
 use App\Traits\RestHelperTrait;
-use App\Exceptions\InvalidJSON;
 use App\StatisticInstance;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 
-class StatisticsInstancesCacheUpdateRealTime implements ShouldQueue {
+class StatisticsInstancesCacheUpdateHour implements ShouldQueue {
 	use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, RestHelperTrait;
 
 	private $instance_id;
@@ -45,9 +44,9 @@ class StatisticsInstancesCacheUpdateRealTime implements ShouldQueue {
 		}
 
 		if ( ! empty( $InitialSearchDate ) ) {
-			$data = StatisticInstance::InstanceId( $this->instance_id )->StatRealtime( $InitialSearchDate )->get();
+			$data = StatisticInstance::InstanceId( $this->instance_id )->MinuteAvage()->StatRealtime( $InitialSearchDate )->get();
 		} else {
-			$data = StatisticInstance::InstanceId( $this->instance_id )->StatRealtime()->get();
+			$data = StatisticInstance::InstanceId( $this->instance_id )->MinuteAvage()->StatRealtime()->get();
 		}
 
 		foreach ( $data as $item ) {

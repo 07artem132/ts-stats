@@ -22,6 +22,8 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TaskLog whereTaskId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TaskLog whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @property int $tasks_id
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\TaskLog whereTasksId($value)
  */
 class TaskLog extends Model
 {
